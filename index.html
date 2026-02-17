@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCOS/PCOD Health Survey</title>
+    <style>
+        :root {
+            --primary: #8a70d6;
+            --primary-dark: #6b52b3;
+            --bg: #fdfbff;
+            --card: #ffffff;
+            --text: #333;
+            --accent: #e9e4ff;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .survey-container {
+            background: var(--card);
+            max-width: 750px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(138, 112, 214, 0.15);
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary); margin: 0 0 10px 0; font-size: 2rem; }
+        p.desc { color: #777; font-size: 0.95rem; }
+
+        /* Progress Bar Styles */
+        .progress-wrapper {
+            background: var(--accent);
+            height: 10px;
+            border-radius: 50px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Question Styles */
+        .question-block { margin-bottom: 35px; }
+        label.main-label { 
+            display: block; 
+            font-weight: 700; 
+            margin-bottom: 15px; 
+            font-size: 1.05rem;
+            color: #222;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        select, 
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Options/Grid Styles */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            background: #fcfcfc;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-item:hover { 
+            background: var(--accent);
+            border-color: var(--primary);
+        }
+        .option-item input { margin-right: 12px; accent-color: var(--primary); transform: scale(1.2); }
+
+        /* Slider Styles */
+        .slider-container { display: flex; align-items: center; gap: 20px; }
+        input[type="range"] { flex: 1; accent-color: var(--primary); }
+        .slider-val { font-weight: bold; color: var(--primary); font-size: 1.2rem; }
+
+        /* Buttons */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 4px 15px rgba(138, 112, 214, 0.3);
+        }
+        .submit-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .submit-btn:active { transform: translateY(0); }
+
+        /* Success Message */
+        #success-screen {
+            display: none;
+            text-align: center;
+            padding: 50px 0;
+        }
+        .success-icon { font-size: 4rem; color: #2d6a4f; margin-bottom: 20px; }
+
+        @media (max-width: 600px) {
+            .survey-container { padding: 20px; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="survey-container">
+    <div id="survey-form-wrapper">
+        <header class="header">
+            <h1>PCOS & PCOD Survey</h1>
+            <p class="desc">Please answer the questions below. Your feedback is vital for our research.</p>
+        </header>
+
+        <div class="progress-wrapper">
+            <div id="progress-bar"></div>
+        </div>
+
+        <form id="healthForm">
+            <div class="question-block">
+                <label class="main-label" for="age">1. What is your current age?</label>
+                <input type="number" id="age" name="age" placeholder="Enter age" required min="10" max="90">
+            </div>
+
+            <div class="question-block">
+                <label class="main-label">2. Have you been clinically diagnosed by a doctor?</label>
+                <div class="options-grid">
+                    <label class="option-item"><input type="radio" name="diagnosis" value="PCOS" required> PCOS</label>
+                    <label class="option-item"><input type="radio" name="diagnosis" value="PCOD"> PCOD</label>
+                    <label class="option-item"><input type="radio" name="diagnosis" value="Symptoms-Only"> Not diagnosed, but have symptoms</label>
+                    <label class="option-item"><input type="radio" name="diagnosis" value="No"> No</label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label class="main-label">3. How would you describe your menstrual cycle?</label>
+                <select name="period_type" required>
+                    <option value="">-- Choose Option --</option>
+                    <option value="regular">Regular (Cycles of 21-35 days)</option>
+                    <option value="infrequent">Infrequent (Cycles longer than 35 days)</option>
+                    <option value="absent">Absent (No periods for 3+ months)</option>
+                    <option value="irregular">Extremely Irregular (Unpredictable)</option>
+                </select>
+            </div>
+
+            <div class="question-block">
+                <label class="main-label">4. Which symptoms do you experience? (Select all that apply)</label>
+                <div class="options-grid">
+                    <label class="option-item"><input type="checkbox" name="symptoms" value="Acne"> Acne/Skin issues</label>
+                    <label class="option-item"><input type="checkbox" name="symptoms" value="HairLoss"> Thinning Hair</label>
+                    <label class="option-item"><input type="checkbox" name="symptoms" value="Weight"> Sudden Weight Gain</label>
+                    <label class="option-item"><input type="checkbox" name="symptoms" value="BodyHair"> Excess Body Hair</label>
+                    <label class="option-item"><input type="checkbox" name="symptoms" value="Fatigue"> Chronic Fatigue</label>
+                    <label class="option-item"><input type="checkbox" name="symptoms" value="Mood"> Anxiety/Mood Swings</label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label class="main-label">5. On a scale of 1-10, what is your average stress level?</label>
+                <div class="slider-container">
+                    <input type="range" name="stress_level" min="1" max="10" value="5" id="stressSlider">
+                    <span class="slider-val" id="stressVal">5</span>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label class="main-label">6. How many days per week do you engage in physical activity?</label>
+                <div class="options-grid">
+                    <label class="option-item"><input type="radio" name="exercise" value="0"> 0 days</label>
+                    <label class="option-item"><input type="radio" name="exercise" value="1-2"> 1-2 days</label>
+                    <label class="option-item"><input type="radio" name="exercise" value="3-5"> 3-5 days</label>
+                    <label class="option-item"><input type="radio" name="exercise" value="Daily"> Daily</label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label class="main-label">7. Do you currently follow a specific dietary plan?</label>
+                <select name="diet_type">
+                    <option value="None">No specific diet</option>
+                    <option value="Low-GI">Low Glycemic (GI) Diet</option>
+                    <option value="Keto/Low-Carb">Keto or Low Carb</option>
+                    <option value="Vegetarian/Vegan">Vegetarian or Vegan</option>
+                    <option value="Gluten-Dairy-Free">Gluten/Dairy Free</option>
+                </select>
+            </div>
+
+            <div class="question-block">
+                <label class="main-label" for="meds">8. Are you taking any medication or supplements for this?</label>
+                <input type="text" id="meds" name="meds" placeholder="e.g. Metformin, Myo-Inositol, etc.">
+            </div>
+
+            <div class="question-block">
+                <label class="main-label">9. How many hours of sleep do you get on average?</label>
+                <div class="options-grid">
+                    <label class="option-item"><input type="radio" name="sleep" value="<5"> Less than 5 hours</label>
+                    <label class="option-item"><input type="radio" name="sleep" value="6-8"> 6-8 hours</label>
+                    <label class="option-item"><input type="radio" name="sleep" value=">8"> More than 8 hours</label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <label class="main-label" for="challenges">10. What is your biggest challenge in managing this condition?</label>
+                <textarea id="challenges" name="challenges" rows="4" placeholder="Briefly share your experience..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" id="finalSubmit">Submit Survey Responses</button>
+        </form>
+    </div>
+
+    <div id="success-screen">
+        <div class="success-icon">✓</div>
+        <h2>Thank You!</h2>
+        <p>Your responses have been recorded successfully. Your data helps us move forward in understanding PCOS and PCOD.</p>
+        <button onclick="window.location.reload()" style="background: var(--accent); color: var(--primary); border:none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold;">Submit Another Response</button>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('healthForm');
+    const progressBar = document.getElementById('progress-bar');
+    const stressSlider = document.getElementById('stressSlider');
+    const stressVal = document.getElementById('stressVal');
+
+    // 1. Update Stress Value Display
+    stressSlider.oninput = function() {
+        stressVal.innerHTML = this.value;
+    }
+
+    // 2. BLOCK ENTER KEY FROM SUBMITTING
+    // This allows Enter for new lines in Textareas, but blocks it for everything else
+    form.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            if (e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                return false;
+            }
+        }
+    });
+
+    // 3. PROGRESS BAR LOGIC
+    form.addEventListener('change', () => {
+        const totalQuestions = 10;
+        const formData = new FormData(form);
+        
+        // Use a Set to count unique question names that have a value
+        const filledQuestions = new Set();
+        for (let entry of formData.entries()) {
+            if (entry[1] !== "" && entry[1] !== null) {
+                filledQuestions.add(entry[0]);
+            }
+        }
+
+        const progress = (filledQuestions.size / totalQuestions) * 100;
+        progressBar.style.width = Math.min(progress, 100) + '%';
+    });
+
+    // 4. FINAL SUBMIT HANDLER
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Show loading state on button
+        const btn = document.getElementById('finalSubmit');
+        btn.innerText = "Saving...";
+        btn.style.opacity = "0.7";
+        btn.disabled = true;
+
+        // Collect all data into an object
+        const data = Object.fromEntries(new FormData(form).entries());
+        console.log("Final Survey Results:", data);
+
+        // Simulate a small delay for better UX
+        setTimeout(() => {
+            document.getElementById('survey-form-wrapper').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+            window.scrollTo(0,0);
+        }, 1200);
+    });
+</script>
+
+</body>
+</html>
